@@ -1,10 +1,11 @@
 #include "neuralnet.h"
+using namespace std;
 
 NeuronLayer::NeuronLayer(int layer_s, int num_inputs)
   : layer_size (layer_s)
 {
   Neuron n (num_inputs); // Initial neuron to use at each position
-  neurons = std::vector<Neuron> (layer_s, n);
+  neurons = vector<Neuron> (layer_s, n);
 }
 
 int NeuronLayer::get_size()
@@ -30,7 +31,7 @@ void NeuronLayer::set_neuron(int idx, Neuron n)
   neurons[idx] = n;
 }
 
-void NeuronLayer::update(std::vector<float> inputs)
+void NeuronLayer::update(vector<float> inputs)
 {
   for(int i = 0; i < layer_size; i++)
   {
@@ -38,19 +39,19 @@ void NeuronLayer::update(std::vector<float> inputs)
   }
 }
 
-void NeuronLayer::update(std::vector<float> inputs, std::vector<float> left)
+void NeuronLayer::update(vector<float> inputs, vector<float> left)
 {
   for(int i = 0; i < layer_size; i++)
   {
-    std::vector<float> inputsWithLeft (inputs);
+    vector<float> inputsWithLeft (inputs);
     inputsWithLeft.push_back(left[i]);
     neurons[i].update(inputsWithLeft);
   }
 }
 
-std::vector<float> NeuronLayer::get_outputs()
+vector<float> NeuronLayer::get_outputs()
 {
-  std::vector<float> outputs (neurons.size());
+  vector<float> outputs (neurons.size());
 
   for(int i = 0; i < neurons.size(); i++)
   {

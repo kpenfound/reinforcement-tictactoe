@@ -1,4 +1,5 @@
 #include "neuralnet.h"
+using namespace std;
 
 Neuron::Neuron(int num_inputs)
   : weights(num_inputs),
@@ -10,7 +11,7 @@ Neuron::Neuron(int num_inputs)
     }
   }
 
-void Neuron::set_weights(std::vector<float> w)
+void Neuron::set_weights(vector<float> w)
 {
   weights.assign(w.begin(), w.end());
 }
@@ -30,7 +31,7 @@ float Neuron::get_weight(int idx)
   return weights[idx];
 }
 
-void Neuron::update(std::vector<float> inputs)
+void Neuron::update(vector<float> inputs)
 {
   int inputSize = inputs.size();
   float sum = 0.0;
