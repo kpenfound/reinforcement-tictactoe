@@ -16,7 +16,7 @@ public:
   Game() : board(board_size, vector<int>(board_size, 0)), players (0) {};
   vector< vector<int> > get_board() const;
   bool make_move(int, int);
-  int has_winner();
+  int has_winner() const;
   int join_game();
 };
 

@@ -6,7 +6,7 @@
 
 // Neural Network dimensions
 const int inputs = 9;
-const int hidden_size = 64;
+const int hidden_size = 18;
 const int outputs = 9;
 
 class Player

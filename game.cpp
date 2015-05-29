@@ -1,5 +1,4 @@
 #include "game.h"
-#include <iostream>
 using namespace std;
 
 vector< vector<int> > Game::get_board() const
@@ -9,16 +8,15 @@ vector< vector<int> > Game::get_board() const
 
 bool Game::make_move(int space, int player)
 {
-  if(space >= 0 && space < board_size * board_size && board[(board_size / space)][(board_size & space)] == 0)
+  if(space >= 0 && space < (board_size * board_size) && board[(space / board_size)][(space % board_size)] == 0)
   {
-    cout << "assigning tile " << space << " to player " << player << endl;
-    board[(board_size / space)][(board_size % space)] = player;
+    board[(space / board_size)][(space % board_size)] = player;
     return true;
   }
   return false;
 }
 
-int Game::has_winner()
+int Game::has_winner() const
 {
   int winner = 0;
   // Rows
