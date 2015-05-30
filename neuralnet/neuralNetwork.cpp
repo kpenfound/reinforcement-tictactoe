@@ -3,8 +3,11 @@ using namespace std;
 
 NeuralNetwork::NeuralNetwork(int input_s, int hidden_s, int output_s)
   : inputs(input_s, 1.0),
-  hidden_layers(vector<NeuronLayer>(num_hidden_layers, NeuronLayer(hidden_s, input_s + 1))), // + 1 for left input
-  output_layer(output_s, hidden_s) {}
+  hidden_layers(vector<NeuronLayer>(num_hidden_layers, NeuronLayer(hidden_s, hidden_s))),
+  output_layer(output_s, hidden_s)
+  {
+    hidden_layers[0] = NeuronLayer(hidden_s, input_s); // Different input size than the rest of the hidden layers
+  }
 
 void NeuralNetwork::set_inputs(vector<float> in)
 {
@@ -23,7 +26,7 @@ void NeuralNetwork::update()
   for(int i = 0; i < num_hidden_layers; i++)
   {
     hidden_layers[i].update(ins);
-    ins = hidden_layers[i].get_output();
+    ins = hidden_layers[i].get_outputs();
   }
   output_layer.update(ins);
 }
@@ -41,8 +44,7 @@ float NeuralNetwork::nonlinearDerivative(float a)
 void NeuralNetwork::backpropagate(vector<float> expected)
 {
   int output_size = output_layer.get_size();
-  int hidden_size = hidden_layer[0].get_size();
-  int input_size = inputs.size() + 1; // + 1 for left side input
+  int hidden_size = hidden_layers[0].get_size();
   vector<float> output_error (output_size);
   vector< vector<float> > hidden_errors (num_hidden_layers, vector<float>(hidden_size));
 
@@ -59,31 +61,45 @@ void NeuralNetwork::backpropagate(vector<float> expected)
     output_error[i] = (expected[i] - out) * (1 - out) * out;
   }
 
-  // Find hidden layer's error
-  for(int i = 0; i < hidden_size; i++)
+  NeuronLayer higher_layer = output_layer;
+  for(int h = num_hidden_layers - 1; h >= 0; h--)
   {
-    hidden_error[i] = 0;
-    for(int j = 0; j < output_size; j++)
+    int higher_layer_size = higher_layer.get_size();
+    // Find hidden layer's error
+    for(int i = 0; i < hidden_size; i++)
     {
-      Neuron output_node = output_layer.get_neuron(j);
-      float weight = output_node.get_weight(i);
-      hidden_error[i] += weight * output_error[j];
+      hidden_errors[h][i] = 0;
+      for(int j = 0; j < higher_layer_size; j++)
+      {
+        Neuron output_node = higher_layer.get_neuron(j);
+        float weight = output_node.get_weight(i);
+        hidden_errors[h][i] += weight * output_error[j];
+      }
     }
+    higher_layer = hidden_layers[h];
   }
 
   // Adjust hidden layer's weights
-  for(int i = 0; i < hidden_size; i++)
+  for(int h = 0; h < num_hidden_layers; h++)
   {
-    Neuron hidden_node = hidden_layer.get_neuron(i);
-    vector<float> adjusted_weights (input_size);
-    for(int k = 0; k < input_size; k++)
+    for(int i = 0; i < hidden_size; i++)
     {
-      adjusted_weights[k] = hidden_node.get_weight(k);
-      float delta =  hidden_error[i] * nonlinearDerivative(hidden_node.get_output());
-      adjusted_weights[k] += delta;
+      Neuron hidden_node = hidden_layers[h].get_neuron(i);
+      int input_size = hidden_size;
+      if(h == 0)
+      {
+        input_size = inputs.size();
+      }
+      vector<float> adjusted_weights (input_size);
+      for(int k = 0; k < input_size; k++)
+      {
+        adjusted_weights[k] = hidden_node.get_weight(k);
+        float delta =  hidden_errors[h][i] * nonlinearDerivative(hidden_node.get_output());
+        adjusted_weights[k] += delta;
+      }
+      hidden_node.set_weights(adjusted_weights);
+      hidden_layers[h].set_neuron(i, hidden_node);
     }
-    hidden_node.set_weights(adjusted_weights);
-    hidden_layer.set_neuron(i, hidden_node);
   }
 
   // Adjust output layer's weights

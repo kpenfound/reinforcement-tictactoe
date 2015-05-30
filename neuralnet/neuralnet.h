@@ -43,7 +43,7 @@ public:
   NeuralNetwork(int,int,int); // Constructs a network with the given dimensions
   void set_inputs(vector<float>); // Assigns the network the given inputs
   vector<float> get_outputs(); // Returns the outputs of the network
-  void update(vector<float>); // Executes the network with the given left side inputs
+  void update(); // Executes the network with the inputs
   static float nonlinearFunction(float); // Nonlinear function used for this network
   static float nonlinearDerivative(float); // Derivative of the above nonlinear function
   void backpropagate(vector<float>); // Train the network using backpropagation with the given target outputs
