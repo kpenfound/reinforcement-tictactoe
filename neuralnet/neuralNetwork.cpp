@@ -3,7 +3,7 @@ using namespace std;
 
 NeuralNetwork::NeuralNetwork(int input_s, int hidden_s, int output_s)
   : inputs(input_s, 1.0),
-  hidden_layer(hidden_s, input_s + 1), // + 1 for left input
+  hidden_layers(vector<NeuronLayer>(num_hidden_layers, NeuronLayer(hidden_s, input_s + 1))), // + 1 for left input
   output_layer(output_s, hidden_s) {}
 
 void NeuralNetwork::set_inputs(vector<float> in)
@@ -17,16 +17,15 @@ vector<float> NeuralNetwork::get_outputs()
   return outs;
 }
 
-vector<float> NeuralNetwork::get_hidden_outputs()
+void NeuralNetwork::update()
 {
-  vector<float> outs = hidden_layer.get_outputs();
-  return outs;
-}
-
-void NeuralNetwork::update(vector<float> left)
-{
-  hidden_layer.update(inputs, left);
-  output_layer.update(hidden_layer.get_outputs());
+  vector<float> ins (inputs);
+  for(int i = 0; i < num_hidden_layers; i++)
+  {
+    hidden_layers[i].update(ins);
+    ins = hidden_layers[i].get_output();
+  }
+  output_layer.update(ins);
 }
 
 float NeuralNetwork::nonlinearFunction(float a)
@@ -42,10 +41,10 @@ float NeuralNetwork::nonlinearDerivative(float a)
 void NeuralNetwork::backpropagate(vector<float> expected)
 {
   int output_size = output_layer.get_size();
-  int hidden_size = hidden_layer.get_size();
+  int hidden_size = hidden_layer[0].get_size();
   int input_size = inputs.size() + 1; // + 1 for left side input
   vector<float> output_error (output_size);
-  vector<float> hidden_error (hidden_size);
+  vector< vector<float> > hidden_errors (num_hidden_layers, vector<float>(hidden_size));
 
   // Find output layer's error
   if(expected.size() != output_size)
@@ -88,7 +87,7 @@ void NeuralNetwork::backpropagate(vector<float> expected)
   }
 
   // Adjust output layer's weights
-  vector<float> hidden_output = hidden_layer.get_outputs();
+  vector<float> hidden_output = hidden_layers[num_hidden_layers - 1].get_outputs();
   for(int i = 0; i < output_size; i++)
   {
     Neuron output_node = output_layer.get_neuron(i);

@@ -13,10 +13,10 @@ bool AIPlayer::make_move(int m)
     {
       for(int j = 0; j < board_size; j++)
       {
-        availableMoves[(i * board_size) + j] = 0.0;
+        availableMoves[(i * board_size) + j] = 0.1;
         if(board[i][j] == 0)
         {
-          availableMoves[(i * board_size) + j] = 1.0;
+          availableMoves[(i * board_size) + j] = 0.9;
         }
       }
     }
@@ -30,8 +30,6 @@ int AIPlayer::pick_move()
 {
   vector< vector<int> > board (game->get_board());
   vector<float> serializedBoard (board_size * board_size);
-  vector<float> leftInput (nn.get_hidden_outputs());
-
   for(int i = 0; i < board_size; i++)
   {
     for(int j = 0; j < board_size; j++)
@@ -41,7 +39,7 @@ int AIPlayer::pick_move()
   }
 
   nn.set_inputs(serializedBoard);
-  nn.update(leftInput);
+  nn.update();
   vector<float> outputs (nn.get_outputs());
 
   int max_out = 4;

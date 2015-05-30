@@ -7,6 +7,8 @@
 
 using namespace std;
 
+const int num_hidden_layers = 3;
+
 class Neuron
 {
   vector<float> weights; // Weights corresponding to each input
@@ -29,20 +31,18 @@ public:
   Neuron get_neuron(int); // Returns the neuron at a given index
   void set_neuron(int, Neuron); // Assigns a neuron at the given index
   void update(vector<float>); // Executes each neuron in the layer
-  void update(vector<float>, vector<float>); // Updates with left side inputs included
   vector<float> get_outputs(); // Returns the set of outputs of the neurons
 };
 
 class NeuralNetwork
 {
   vector<float> inputs; // Holder for input set
-  NeuronLayer hidden_layer;
+  vector<NeuronLayer> hidden_layers;
   NeuronLayer output_layer;
 public:
   NeuralNetwork(int,int,int); // Constructs a network with the given dimensions
   void set_inputs(vector<float>); // Assigns the network the given inputs
   vector<float> get_outputs(); // Returns the outputs of the network
-  vector<float> get_hidden_outputs(); // Returns the outputs of the hidden layer
   void update(vector<float>); // Executes the network with the given left side inputs
   static float nonlinearFunction(float); // Nonlinear function used for this network
   static float nonlinearDerivative(float); // Derivative of the above nonlinear function

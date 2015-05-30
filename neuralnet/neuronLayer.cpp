@@ -39,16 +39,6 @@ void NeuronLayer::update(vector<float> inputs)
   }
 }
 
-void NeuronLayer::update(vector<float> inputs, vector<float> left)
-{
-  for(int i = 0; i < layer_size; i++)
-  {
-    vector<float> inputsWithLeft (inputs);
-    inputsWithLeft.push_back(left[i]);
-    neurons[i].update(inputsWithLeft);
-  }
-}
-
 vector<float> NeuronLayer::get_outputs()
 {
   vector<float> outputs (neurons.size());
