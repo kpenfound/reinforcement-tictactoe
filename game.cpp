@@ -21,18 +21,16 @@ bool Game::make_move(int space, int player)
 
 int Game::has_winner() const
 {
-  int winner = -2;
-  // Rows
+  int winner = 0;
+
   for(int i = 0; i < board_size; i++)
   {
+    // Rows
     if(board[i][0] != 0 && board[i][0] == board[i][1] && board[i][1] == board[i][2])
     {
       return board[i][0];
     }
-  }
-  // Columns
-  for(int i = 0; i < board_size; i++)
-  {
+    // Columns
     if(board[0][i] != 0 && board[0][i] == board[1][i] && board[1][i] == board[2][i])
     {
       return board[0][i];
@@ -49,15 +47,9 @@ int Game::has_winner() const
   }
 
   // Tie
-  for(int i = 0; i < board_size; i++)
+  if(turn == board_size * board_size)
   {
-    for(int j = 0; j < board_size; j++)
-    {
-      if(board[i][j] == 0)
-      {
-        winner = 0;
-      }
-    }
+    winner = -2;
   }
 
   return winner;
