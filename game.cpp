@@ -11,6 +11,9 @@ bool Game::make_move(int space, int player)
   if(space >= 0 && space < (board_size * board_size) && board[(space / board_size)][(space % board_size)] == 0)
   {
     board[(space / board_size)][(space % board_size)] = player;
+    turns[turn] = (board);
+    moves[turn] = space;
+    turn++;
     return true;
   }
   return false;
@@ -18,7 +21,7 @@ bool Game::make_move(int space, int player)
 
 int Game::has_winner() const
 {
-  int winner = 0;
+  int winner = -2;
   // Rows
   for(int i = 0; i < board_size; i++)
   {
@@ -44,6 +47,19 @@ int Game::has_winner() const
       return board[1][1];
     }
   }
+
+  // Tie
+  for(int i = 0; i < board_size; i++)
+  {
+    for(int j = 0; j < board_size; j++)
+    {
+      if(board[i][j] == 0)
+      {
+        winner = 0;
+      }
+    }
+  }
+
   return winner;
 }
 
@@ -58,6 +74,29 @@ int Game::join_game()
   {
     return -1;
   }
+}
+
+
+int Game::get_turn() const
+{
+  return turn;
+}
+
+vector<int> Game::get_moves() const
+{
+  return moves;
+}
+
+vector< vector< vector<int> > > Game::get_turns() const
+{
+  return turns;
+}
+
+void Game::reset()
+{
+  turn = 0;
+  vector< vector<int> > newBoard(board_size, vector<int>(board_size,0));
+  board = newBoard;
 }
 
 ostream& operator<<(ostream& out, const Game& g)

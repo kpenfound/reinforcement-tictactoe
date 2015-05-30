@@ -47,6 +47,6 @@ void Neuron::update(vector<float> inputs)
 float randomWeight()
 {
   float w = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-  return w;
+  return w / 20.0;
 }
 

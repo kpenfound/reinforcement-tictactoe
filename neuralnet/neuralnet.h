@@ -7,7 +7,7 @@
 
 using namespace std;
 
-const int num_hidden_layers = 3;
+const int num_hidden_layers = 6;
 
 class Neuron
 {
