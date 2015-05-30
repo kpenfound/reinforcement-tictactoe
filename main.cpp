@@ -21,7 +21,7 @@ int main(void)
   AIPlayer players[] = {p1, p2};
   for(int i = 0; i < games_to_play; i++)
   {
-    cout << "Starting game " << i << endl;
+    cout << "Game " << i << endl;
     while(g->has_winner() == 0)
     {
       while(! players[counter].make_move(players[counter].pick_move()))
@@ -35,6 +35,7 @@ int main(void)
     players[0].end_game(winner);
     players[1].end_game(winner);
     g->reset();
+    counter = 0;
 
     if(winner == 1)
     {
@@ -52,23 +53,22 @@ int main(void)
   // Now let the user play
   bool end_game = false;
   ConsolePlayer cp (g);
-  cp.team = players[1].team;
+  cp.team = p2.team;
   while(!end_game)
   {
     cout << "playing the computer:" << endl;
     while(g->has_winner() == 0)
     {
-      // User goes first
-      int space = cp.pick_move();
-      while(!cp.make_move(space))
-      {
-        space = cp.pick_move();
-      }
-
+      while(! p1.make_move(p1.pick_move()))
+      {};
       if(g->has_winner() == 0)
       {
-        while(! p1.make_move(p1.pick_move()))
-        {};
+        // Computer goes first
+        int space = cp.pick_move();
+        while(!cp.make_move(space))
+        {
+          space = cp.pick_move();
+        }
       }
     }
     cout << *g << endl;

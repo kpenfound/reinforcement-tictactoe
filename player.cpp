@@ -56,7 +56,7 @@ int AIPlayer::pick_move()
 
 void AIPlayer::end_game(int winner)
 {
-  if(winner == team * -1) // If lost
+  if(winner != -2) // If not tie
   {
     int start_turn = 0;
     if(winner == -1)
