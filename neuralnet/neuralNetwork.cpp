@@ -38,7 +38,7 @@ float NeuralNetwork::nonlinearFunction(float a)
 
 float NeuralNetwork::nonlinearDerivative(float a)
 {
-  return 1 - (tanh(a) * tanh(a));
+  return 1.0 - (tanh(a) * tanh(a));
 }
 
 void NeuralNetwork::backpropagate(vector<float> expected)
@@ -58,10 +58,11 @@ void NeuralNetwork::backpropagate(vector<float> expected)
   {
     Neuron output_node = output_layer.get_neuron(i);
     float out = output_node.get_output();
-    output_error[i] = (expected[i] - out) * (1 - out) * out;
+    output_error[i] = (expected[i] - out) * (1.0 - out) * out;
   }
 
   NeuronLayer higher_layer = output_layer;
+  vector<float> * higher_error = &output_error;
   for(int h = num_hidden_layers - 1; h >= 0; h--)
   {
     int higher_layer_size = higher_layer.get_size();
@@ -73,10 +74,11 @@ void NeuralNetwork::backpropagate(vector<float> expected)
       {
         Neuron output_node = higher_layer.get_neuron(j);
         float weight = output_node.get_weight(i);
-        hidden_errors[h][i] += weight * output_error[j];
+        hidden_errors[h][i] += weight * (*higher_error)[j];
       }
     }
     higher_layer = hidden_layers[h];
+    higher_error = &(hidden_errors[h]);
   }
 
   // Adjust hidden layer's weights
@@ -103,7 +105,6 @@ void NeuralNetwork::backpropagate(vector<float> expected)
   }
 
   // Adjust output layer's weights
-  vector<float> hidden_output = hidden_layers[num_hidden_layers - 1].get_outputs();
   for(int i = 0; i < output_size; i++)
   {
     Neuron output_node = output_layer.get_neuron(i);
